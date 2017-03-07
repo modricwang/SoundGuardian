@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/SoundGuardian.iml" filepath="$PROJECT_DIR$/SoundGuardian.iml" />
+      <module fileurl="file://$PROJECT_DIR$/hoverballdemo/hoverballdemo.iml" filepath="$PROJECT_DIR$/hoverballdemo/hoverballdemo.iml" />
+      <module fileurl="file://$PROJECT_DIR$/isv/isv.iml" filepath="$PROJECT_DIR$/isv/isv.iml" />
+      <module fileurl="file://$PROJECT_DIR$/isvdemo/isvdemo.iml" filepath="$PROJECT_DIR$/isvdemo/isvdemo.iml" />
+      <module fileurl="file://$PROJECT_DIR$/page1/page1.iml" filepath="$PROJECT_DIR$/page1/page1.iml" />
+      <module fileurl="file://$PROJECT_DIR$/page2/page2.iml" filepath="$PROJECT_DIR$/page2/page2.iml" />
+      <module fileurl="file://$PROJECT_DIR$/prerelease/prerelease.iml" filepath="$PROJECT_DIR$/prerelease/prerelease.iml" />
+    </modules>
+  </component>
+</project>

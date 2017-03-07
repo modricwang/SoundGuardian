@@ -9,10 +9,7 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/hoverballdemo" />
-            <option value="$PROJECT_DIR$/isv" />
             <option value="$PROJECT_DIR$/isvdemo" />
-            <option value="$PROJECT_DIR$/page1" />
-            <option value="$PROJECT_DIR$/page2" />
             <option value="$PROJECT_DIR$/prerelease" />
           </set>
         </option>

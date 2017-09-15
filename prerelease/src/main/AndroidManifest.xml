@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="wang.yi_ru.prerelease">
-
-    <!-- minSdkVersion设置为8，默认的targetSdkVersion也为8，避免多点触控 -->
+    package="wang.yi_ru.prerelease"> <!-- minSdkVersion设置为8，默认的targetSdkVersion也为8，避免多点触控 -->
     <uses-sdk android:minSdkVersion="8" />
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -18,38 +16,57 @@
     <application
         android:name=".App"
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/icon"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".WelcomeActivity">
+        <activity
+            android:name=".WelcomeActivity"
+            android:theme="@style/AppTheme">
+            <!--
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            -->
         </activity>
-        <activity android:name=".ManageActivity">
-            <!--<intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>-->
-        </activity>
-
-
         <activity android:name=".RegisterActivity">
-            <!--<intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>-->
+
+
+
         </activity>
 
-        <service android:name=".DialogFloatingService" />
-        <service android:name=".FloatingService" />
-    </application>
+        <activity
+            android:name=".ManageActivity"
+            android:theme="@style/AppTheme">
+        <!--
+                    <intent-filter>
+                        <action android:name="android.intent.action.MAIN" />
 
+                        <category android:name="android.intent.category.LAUNCHER" />
+                    </intent-filter>-->
+                </activity>
+
+        <service
+            android:theme="@style/AppTheme"
+            android:name=".DialogFloatingService" />
+        <service android:name=".FloatingService" />
+
+        <activity
+            android:name=".SplashScreen"
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>-->
+            <action android:name="android.intent.action.MAIN" />
+
+            <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".PasswordActivity"
+            android:label="@string/title_activity_password"></activity>
+    </application>
 
 </manifest>

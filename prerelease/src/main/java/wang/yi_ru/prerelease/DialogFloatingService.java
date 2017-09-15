@@ -1,17 +1,29 @@
 package wang.yi_ru.prerelease;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.Service;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,9 +42,13 @@ public class DialogFloatingService extends Service {
     LayoutInflater inflater;
     WindowManager mWindowManager;
     TextView textShow;
+    Spinner spinner;
+    ArrayAdapter<String> adapter;
 
     private SpeakerVerifier mVerifier;
     private static final String TAG = DialogFloatingService.class.getSimpleName();
+
+    private int which = -1;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -74,6 +90,29 @@ public class DialogFloatingService extends Service {
         final TextView textPwd = (TextView) view.findViewById(R.id.dialog_text_pwd);
         textShow = (TextView) view.findViewById(R.id.dialog_text_show);
 
+        final String[] passowrds = {
+                getString(R.string.pref_title_password0),
+                getString(R.string.pref_title_password1),
+                getString(R.string.pref_title_password2)};
+
+        spinner = (Spinner) view.findViewById(R.id.dialog_spinner);
+        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, passowrds);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        //将适配器添加到spinner中去
+        spinner.setAdapter(adapter);
+        spinner.setVisibility(View.VISIBLE);//设置默认显示
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                which = position;
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                which = -1;
+            }
+        });
+
         mVerifier = SpeakerVerifier.createVerifier(DialogFloatingService.this, new InitListener() {
 
             @Override
@@ -86,6 +125,7 @@ public class DialogFloatingService extends Service {
                 }
             }
         });
+
         iv.setOnClickListener(new OnClickListener() {
 
             @Override
@@ -99,7 +139,9 @@ public class DialogFloatingService extends Service {
                 // 设置业务类型为验证
                 mVerifier.setParameter(SpeechConstant.ISV_SST, "verify");
                 // 对于某些麦克风非常灵敏的机器，如nexus、samsung i9300等，建议加上以下设置对录音进行消噪处理
-//			mVerify.setParameter(SpeechConstant.AUDIO_SOURCE, "" + MediaRecorder.AudioSource.VOICE_RECOGNITION);
+//
+
+                mVerifier.setParameter(SpeechConstant.AUDIO_SOURCE, "" + MediaRecorder.AudioSource.VOICE_RECOGNITION);
 
                 // 钦定为数字类型密码
                 // 数字密码注册需要传入密码
@@ -109,13 +151,17 @@ public class DialogFloatingService extends Service {
                         + verifyPwd);
 
                 // 设置auth_id，不能设置为空
-                mVerifier.setParameter(SpeechConstant.AUTH_ID, "aacccc");
-                mVerifier.setParameter(SpeechConstant.ISV_PWDT, "3");
+                String Imei = ((TelephonyManager) getSystemService(TELEPHONY_SERVICE))
+                        .getDeviceId();
+                mVerifier.setParameter(SpeechConstant.AUTH_ID, Imei);
+                mVerifier.setParameter(SpeechConstant.ISV_PWDT, "3"); // 3为数字密码
                 // 开始验证
                 mVerifier.startListening(mVerifyListener);
             }
         });
 
+
+        Log.e("Context Dialog", getApplicationContext().toString());
         // 添加悬浮窗的视图
         mDialog.setContentView(view);
         mDialog.setTitle("声纹验证");
@@ -135,10 +181,24 @@ public class DialogFloatingService extends Service {
         @Override
         public void onResult(VerifierResult result) {
             showText(result.source);
+            Log.e("result",result.toString());
+            Log.e("score",Double.toString(result.score));
+            Log.e("score raw",Double.toString(result.score_raw));
+            Log.e("result err",Integer.toString(result.err));
+            Log.e("result ret",Integer.toString(result.ret));
+            if (result.ret == 0 && result.score>Double.parseDouble(PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getString("rate","null")))// 验证通过
+            {
+                showText("验证通过，匹配率为" + result.score);
+                if (which == -1) {
+                    showText("请选择你需要的密码");
+                    return;
+                }
+                ClipData thisClip;
+                thisClip = ClipData.newPlainText("password",
+                        PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getString("password" + which, "null"));
+                ClipboardManager SysClipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+                SysClipboard.setPrimaryClip(thisClip);
 
-            if (result.ret == 0) {
-                // 验证通过
-                showText("验证通过");
             } else {
                 // 验证不通过
                 switch (result.err) {
@@ -164,7 +224,7 @@ public class DialogFloatingService extends Service {
                         showText("音频长达不到自由说的要求");
                         break;
                     default:
-                        showText("验证不通过");
+                        showText("验证不通过，匹配率为" + result.score);
                         break;
                 }
             }
@@ -205,6 +265,7 @@ public class DialogFloatingService extends Service {
             showText("开始说话");
         }
     };
+
 
     private void showText(String s) {
 //        Toast.makeText(getApplicationContext(), s, Toast.LENGTH_SHORT).show();

@@ -3,8 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/SoundGuardian.iml" filepath="$PROJECT_DIR$/SoundGuardian.iml" />
-      <module fileurl="file://$PROJECT_DIR$/hoverballdemo/hoverballdemo.iml" filepath="$PROJECT_DIR$/hoverballdemo/hoverballdemo.iml" />
-      <module fileurl="file://$PROJECT_DIR$/isvdemo/isvdemo.iml" filepath="$PROJECT_DIR$/isvdemo/isvdemo.iml" />
       <module fileurl="file://$PROJECT_DIR$/prerelease/prerelease.iml" filepath="$PROJECT_DIR$/prerelease/prerelease.iml" />
     </modules>
   </component>

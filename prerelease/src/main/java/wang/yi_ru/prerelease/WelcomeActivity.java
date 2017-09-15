@@ -1,7 +1,9 @@
 package wang.yi_ru.prerelease;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.telephony.TelephonyManager;
@@ -25,7 +27,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class WelcomeActivity extends AppCompatActivity implements View.OnClickListener {
+public class WelcomeActivity extends Activity implements View.OnClickListener {
 
     //private Button welcomeButton;
 
@@ -75,9 +77,9 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
         String Imei = ((TelephonyManager) getSystemService(TELEPHONY_SERVICE))
                 .getDeviceId();
         mAuthId = Imei;
+        Log.e("IMEI",Imei);
         //((TextView) findViewById(R.id.introductionText)).setText(Imei);
         // 初始化SpeakerVerifier，InitListener为初始化完成后的回调接口
-        Log.e("Stat", "-2");
         mVerifier = SpeakerVerifier.createVerifier(WelcomeActivity.this, new InitListener() {
 
             @Override
@@ -89,7 +91,6 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
                 }
             }
         });
-        Log.e("Stat", "-1");
         checkState();
     }
 
@@ -98,7 +99,6 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
         mToast.setGravity(Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL, 0, 0);
         mPwdType = PWD_TYPE_NUM;
         // 获取密码之前先终止之前的注册或验证过程
-        Log.e("Stat", "0");
         mVerifier.cancel();
         //initTextView();
         //setRadioClickable(false);
@@ -106,9 +106,9 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
         mVerifier.setParameter(SpeechConstant.PARAMS, null);
         mVerifier.setParameter(SpeechConstant.ISV_PWDT, "" + mPwdType);
         mVerifier.getPasswordList(mPwdListenter);
-        Log.e("Stat", "1");
+
         performModelOperation("que", mModelOperationListener);
-        Log.e("Stat", "2");
+
     }
 
     /**
@@ -145,11 +145,14 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
         mVerifier.setParameter(SpeechConstant.PARAMS, null);
         mVerifier.setParameter(SpeechConstant.ISV_PWDT, "" + mPwdType);
 
-        Log.e("stat", "3");
-        // 设置auth_id，不能设置为空
-        mVerifier.sendRequest(operation, mAuthId, listener);
 
-        Log.e("stat", "4");
+        // 设置auth_id，不能设置为空
+        String Imei = ((TelephonyManager) getSystemService(TELEPHONY_SERVICE))
+                .getDeviceId();
+        mVerifier.setParameter(SpeechConstant.AUTH_ID, Imei);
+        mVerifier.sendRequest(operation, Imei, listener);
+
+
     }
 
     @Override
@@ -213,7 +216,7 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
 
         @Override
         public void onBufferReceived(byte[] buffer) {
-            Log.e("stat", "10");
+
             setRadioClickable(true);
 
             String result = new String(buffer);
@@ -232,13 +235,14 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
                 } else if ("que".equals(cmd)) {
                     if (ret == ErrorCode.SUCCESS) {
                         //TODO
-                        showTip("模型存在");
+                        //showTip("模型存在");
                         //((TextView) findViewById(R.id.introductionText)).setText("AC");
                         mWelcomeButton.setText("现在使用");
                         mWelcomeButton.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
                                 Intent intent = new Intent(WelcomeActivity.this, ManageActivity.class);
+                                intent.putExtra("Registered",false);
                                 startActivity(intent);
                             }
                         });
@@ -265,6 +269,7 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
                     public void onClick(View view) {
                         //TODO Jump to registerActivity
                         Intent intent = new Intent(WelcomeActivity.this, RegisterActivity.class);
+                        intent.putExtra("Registered",false);
                         startActivity(intent);
                     }
                 });
@@ -272,6 +277,12 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
         }
     };
 
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        checkState();
+    }
 
     @Override
     public void finish() {
@@ -295,4 +306,9 @@ public class WelcomeActivity extends AppCompatActivity implements View.OnClickLi
         mToast.show();
     }
 
+    @Override
+    public void onBackPressed() {
+        //finishActivity(0);
+        //System.exit(0);
+    }
 }

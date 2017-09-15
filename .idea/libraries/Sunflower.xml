@@ -1,7 +1,7 @@
 <component name="libraryTable">
   <library name="Sunflower">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/isvdemo/libs/Sunflower.jar!/" />
+      <root url="jar://$PROJECT_DIR$/prerelease/libs/Sunflower.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

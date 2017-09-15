@@ -1,1 +1,1 @@
-include  ':isvdemo',  ':hoverballdemo', ':prerelease'
+include   ':prerelease'

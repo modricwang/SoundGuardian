@@ -1,0 +1,44 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- NOTE: EditTextPreference accepts EditText attributes. -->
+    <!-- NOTE: EditTextPreference's summary should be set to its value by the activity code. -->
+
+    <PreferenceCategory android:title="General">
+        <EditTextPreference
+            android:defaultValue="90"
+            android:inputType="text"
+            android:key="rate"
+            android:maxLines="1"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="匹配率" />
+        <EditTextPreference
+            android:defaultValue="@string/pref_default_display_name"
+            android:inputType="textPassword"
+            android:key="password0"
+            android:maxLines="1"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="@string/pref_title_password0"
+            android:password="true" />
+        <EditTextPreference
+            android:defaultValue="@string/pref_default_display_name"
+            android:inputType="textPassword"
+            android:key="password1"
+            android:maxLines="1"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="@string/pref_title_password1"
+            android:password="true" />
+        <EditTextPreference
+            android:defaultValue="@string/pref_default_display_name"
+            android:inputType="textPassword"
+            android:key="password2"
+            android:maxLines="1"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="@string/pref_title_password2"
+            android:password="true" />
+    </PreferenceCategory>
+
+</PreferenceScreen>

@@ -1,5 +1,6 @@
 package wang.yi_ru.prerelease;
 
+import android.app.Instrumentation;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -9,6 +10,7 @@ import android.os.IBinder;
 import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -21,9 +23,6 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 /**
- * @author:Jack Tony
- * <p>
- * 重要：注意要申请权限！！！！
  * <!-- 悬浮窗的权限 -->
  * <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
  * @tips :思路：
@@ -32,7 +31,6 @@ import android.widget.Toast;
  * 3.获得一个视图的容器，找到悬浮窗视图的父控件，比如linearLayout
  * 4.将父控件添加到WindowManager中去
  * 5.通过这个父控件找到要显示的悬浮窗图标，并进行拖动或点击事件的设置
- * @date :2014-9-25
  */
 public class FloatingService extends Service {
     /**
@@ -71,7 +69,7 @@ public class FloatingService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        initFloating();//设置悬浮窗图标
+        initFloating(); //设置悬浮窗图标
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -83,8 +81,6 @@ public class FloatingService extends Service {
             mWindowManager.removeView(mlayout);
         }
     }
-
-    ///////////////////////////////////////////////////////////////////////
 
     /**
      * 初始化windowManager
@@ -116,7 +112,7 @@ public class FloatingService extends Service {
         //设置window type 下面变量2002是在屏幕区域显示，2003则可以显示在状态栏之上
         wmParams.type = LayoutParams.TYPE_SYSTEM_ALERT;
         //设置图片格式，效果为背景透明
-        wmParams.format = PixelFormat.RGBA_8888;
+        wmParams.format = PixelFormat.TRANSLUCENT;
         //设置浮动窗口不可聚焦（实现操作除浮动窗口外的其他可见窗口的操作）
         //wmParams.flags = LayoutParams.FLAG_NOT_FOCUSABLE;
         //设置可以显示在状态栏上
@@ -150,11 +146,6 @@ public class FloatingService extends Service {
     private int mStartX, mStartY, mStopX, mStopY;
     private boolean isMove;//判断悬浮窗是否移动
 
-    /**
-     * @author:金凯
-     * @tips :自己写的悬浮窗监听器
-     * @date :2014-3-28
-     */
     private class FloatingListener implements OnTouchListener {
 
         @Override
@@ -199,22 +190,14 @@ public class FloatingService extends Service {
 
     }
 
-    /**
-     * @author:金凯
-     * @tips :自己定义的手势监听类
-     * @date :2014-3-29
-     */
     class MyOnGestureListener extends SimpleOnGestureListener {
         @Override
         public boolean onSingleTapConfirmed(MotionEvent e) {
             if (!isMove) {
-                Toast.makeText(getApplicationContext(), "你点击了悬浮窗", Toast.LENGTH_SHORT).show();
-                System.out.println("onclick");
                 startService(new Intent(getApplicationContext(), DialogFloatingService.class));
             }
             return super.onSingleTapConfirmed(e);
         }
     }
-
 
 }

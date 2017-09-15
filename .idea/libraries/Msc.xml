@@ -1,7 +1,7 @@
 <component name="libraryTable">
   <library name="Msc">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/isvdemo/libs/Msc.jar!/" />
+      <root url="jar://$PROJECT_DIR$/prerelease/libs/Msc.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

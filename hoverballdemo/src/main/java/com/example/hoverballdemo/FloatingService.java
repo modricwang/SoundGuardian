@@ -1,14 +1,18 @@
 package com.example.hoverballdemo;
 
+import android.app.Instrumentation;
 import android.app.Service;
+import android.app.UiAutomation;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
+import android.hardware.input.InputManager;
 import android.os.IBinder;
 import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.Gravity;
+import android.view.InputDevice;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -19,6 +23,8 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
+//import com.android.uiautomator.core.UiDevice;
+//import com.android.uiautomator.testrunner.UiAutomatorTestCase;
 
 /**
  * @author:Jack Tony
@@ -210,11 +216,36 @@ public class FloatingService extends Service {
             if (!isMove) {
                 Toast.makeText(getApplicationContext(), "你点击了悬浮窗", Toast.LENGTH_SHORT).show();
                 System.out.println("onclick");
-                startService(new Intent(getApplicationContext(), DialogFloatingService.class));
+                //startService(new Intent(inputMethodService.class));
+                test();
+                //new inputMethodService().input("23333");
+                //startService(new Intent(getApplicationContext(), DialogFloatingService.class));
             }
             return super.onSingleTapConfirmed(e);
         }
     }
 
+    public void test() {
+        UiAutomation uiAutomation;
+
+        String keycodeStr = "6";
+
+        if (keycodeStr == null || "".equals(keycodeStr)) {
+            return;
+        }
+
+        final int keycode = Integer.parseInt(keycodeStr);
+
+        // 必需在线程中运行,否者报错
+        Thread t = new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+
+
+            }
+        });
+        t.start();
+    }
 
 }

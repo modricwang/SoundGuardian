@@ -8,8 +8,11 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.v7.app.AppCompatActivity;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.Log;
@@ -17,6 +20,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
@@ -50,15 +54,14 @@ public class RegisterActivity extends Activity implements OnClickListener {
     private SpeakerVerifier mVerifier;
     // 声纹AuthId，用户在云平台的身份标识，也是声纹模型的标识
     // 请使用英文字母或者字母和数字的组合，勿使用中文字符
-    private String mAuthId = "";
+    private String mAuthId = "qwert";
     // 文本声纹密码
     private String mTextPwd = "";
     // 数字声纹密码
     private String mNumPwd = "";
     // 数字声纹密码段，默认有5段
     private String[] mNumPwdSegs;
-
-    private EditText mResultEditText;
+    //private EditText mResultEditText;
     private TextView mAuthIdTextView;
     private TextView mShowPwdTextView;
     private TextView mShowMsgTextView;
@@ -66,11 +69,14 @@ public class RegisterActivity extends Activity implements OnClickListener {
     private TextView mRecordTimeTextView;
     private AlertDialog mTextPwdSelectDialog;
     private Toast mToast;
+    private Button mGotoManagementButton;
+    private Button mDeleteButton;
+    private boolean registered;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        registered = getIntent().getBooleanExtra("Registered", false);
         setContentView(R.layout.activity_register);
 
         initUi();
@@ -97,7 +103,13 @@ public class RegisterActivity extends Activity implements OnClickListener {
     }
 
     private void init() {
+        if (!registered) {
+            turnOffGotoButton();
 
+        } else {
+            turnOnGotoButton();
+
+        }
         mVerifier.cancel();
         initTextView();
         setRadioClickable(false);
@@ -109,24 +121,27 @@ public class RegisterActivity extends Activity implements OnClickListener {
 
     @SuppressLint("ShowToast")
     private void initUi() {
-        mResultEditText = (EditText) findViewById(R.id.edt_result);
-        mAuthIdTextView = (TextView) findViewById(R.id.txt_authorid);
+        //mResultEditText = (EditText) findViewById(R.id.edt_result);
         mShowPwdTextView = (TextView) findViewById(R.id.showPwd);
         mShowMsgTextView = (TextView) findViewById(R.id.showMsg);
         mShowRegFbkTextView = (TextView) findViewById(R.id.showRegFbk);
         mRecordTimeTextView = (TextView) findViewById(R.id.recordTime);
+        mGotoManagementButton = (Button) findViewById(R.id.goto_management);
 
         findViewById(R.id.isv_register).setOnClickListener(RegisterActivity.this);
-        findViewById(R.id.isv_verify).setOnClickListener(RegisterActivity.this);
-        findViewById(R.id.isv_stop_record).setOnClickListener(RegisterActivity.this);
-        findViewById(R.id.isv_cancel).setOnClickListener(RegisterActivity.this);
-        findViewById(R.id.isv_getpassword).setOnClickListener(RegisterActivity.this);
-        findViewById(R.id.isv_search).setOnClickListener(RegisterActivity.this);
+        //findViewById(R.id.isv_verify).setOnClickListener(RegisterActivity.this);
+        //findViewById(R.id.isv_stop_record).setOnClickListener(RegisterActivity.this);
+        //findViewById(R.id.isv_cancel).setOnClickListener(RegisterActivity.this);
+        //findViewById(R.id.isv_getpassword).setOnClickListener(RegisterActivity.this);
+        //findViewById(R.id.isv_search).setOnClickListener(RegisterActivity.this);
         findViewById(R.id.isv_delete).setOnClickListener(RegisterActivity.this);
         mPwdType = PWD_TYPE_NUM;
 
         mToast = Toast.makeText(RegisterActivity.this, "", Toast.LENGTH_SHORT);
         mToast.setGravity(Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL, 0, 0);
+
+        mDeleteButton = (Button) (Button) findViewById(R.id.isv_delete);
+
     }
 
     /**
@@ -135,11 +150,18 @@ public class RegisterActivity extends Activity implements OnClickListener {
     private void initTextView() {
         mTextPwd = null;
         mNumPwd = null;
-        mResultEditText.setText("");
+        //mResultEditText.setText("");
         mShowPwdTextView.setText("");
         mShowMsgTextView.setText("");
         mShowRegFbkTextView.setText("");
         mRecordTimeTextView.setText("");
+    }
+
+    @Override
+    public void onBackPressed() {
+        //super.onBackPressed();
+        Intent intent = new Intent(RegisterActivity.this, WelcomeActivity.class);
+        startActivity(intent);
     }
 
     /**
@@ -149,6 +171,29 @@ public class RegisterActivity extends Activity implements OnClickListener {
 
 
     }
+
+    private void turnOnGotoButton() {
+        findViewById(R.id.isv_register).setClickable(false);
+
+        mGotoManagementButton.setClickable(true);
+        mGotoManagementButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(RegisterActivity.this, ManageActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        findViewById(R.id.isv_delete).setClickable(true);
+
+    }
+
+    private void turnOffGotoButton() {
+        findViewById(R.id.isv_register).setClickable(true);
+        mGotoManagementButton.setClickable(false);
+        findViewById(R.id.isv_delete).setClickable(false);
+    }
+
 
     /**
      * 执行模型操作
@@ -173,26 +218,16 @@ public class RegisterActivity extends Activity implements OnClickListener {
         }
         setRadioClickable(false);
         // 设置auth_id，不能设置为空
-        mVerifier.sendRequest(operation, mAuthId, listener);
+        String Imei = ((TelephonyManager) getSystemService(TELEPHONY_SERVICE))
+                .getDeviceId();
+        mVerifier.setParameter(SpeechConstant.AUTH_ID, Imei);
+        mVerifier.sendRequest(operation, Imei, listener);
     }
 
     @Override
     public void onClick(View v) {
         try {
             switch (v.getId()) {
-                case R.id.isv_getpassword:
-                    // 获取密码之前先终止之前的注册或验证过程
-                    mVerifier.cancel();
-                    initTextView();
-                    setRadioClickable(false);
-                    // 清空参数
-                    mVerifier.setParameter(SpeechConstant.PARAMS, null);
-                    mVerifier.setParameter(SpeechConstant.ISV_PWDT, "" + mPwdType);
-                    mVerifier.getPasswordList(mPwdListenter);
-                    break;
-                case R.id.isv_search:
-                    performModelOperation("que", mModelOperationListener);
-                    break;
                 case R.id.isv_delete:
                     performModelOperation("del", mModelOperationListener);
                     break;
@@ -202,7 +237,7 @@ public class RegisterActivity extends Activity implements OnClickListener {
                     mVerifier.setParameter(SpeechConstant.ISV_AUDIO_PATH,
                             Environment.getExternalStorageDirectory().getAbsolutePath() + "/msc/test.pcm");
                     // 对于某些麦克风非常灵敏的机器，如nexus、samsung i9300等，建议加上以下设置对录音进行消噪处理
-//			mVerify.setParameter(SpeechConstant.AUDIO_SOURCE, "" + MediaRecorder.AudioSource.VOICE_RECOGNITION);
+        			mVerifier.setParameter(SpeechConstant.AUDIO_SOURCE, "" + MediaRecorder.AudioSource.VOICE_RECOGNITION);
                     if (mPwdType == PWD_TYPE_TEXT) {
                         // 文本密码注册需要传入密码
                         if (TextUtils.isEmpty(mTextPwd)) {
@@ -226,7 +261,10 @@ public class RegisterActivity extends Activity implements OnClickListener {
 
                     setRadioClickable(false);
                     // 设置auth_id，不能设置为空
-                    mVerifier.setParameter(SpeechConstant.AUTH_ID, mAuthId);
+                    String Imei = ((TelephonyManager) getSystemService(TELEPHONY_SERVICE))
+                            .getDeviceId();
+                    mVerifier.setParameter(SpeechConstant.AUTH_ID, Imei);
+
                     // 设置业务类型为注册
                     mVerifier.setParameter(SpeechConstant.ISV_SST, "train");
                     // 设置声纹密码类型
@@ -234,42 +272,7 @@ public class RegisterActivity extends Activity implements OnClickListener {
                     // 开始注册
                     mVerifier.startListening(mRegisterListener);
                     break;
-                case R.id.isv_verify:
-                    // 清空提示信息
-                    ((TextView) findViewById(R.id.showMsg)).setText("");
-                    // 清空参数
-                    mVerifier.setParameter(SpeechConstant.PARAMS, null);
-                    mVerifier.setParameter(SpeechConstant.ISV_AUDIO_PATH,
-                            Environment.getExternalStorageDirectory().getAbsolutePath() + "/msc/verify.pcm");
-                    mVerifier = SpeakerVerifier.getVerifier();
-                    // 设置业务类型为验证
-                    mVerifier.setParameter(SpeechConstant.ISV_SST, "verify");
-                    // 对于某些麦克风非常灵敏的机器，如nexus、samsung i9300等，建议加上以下设置对录音进行消噪处理
-//			mVerify.setParameter(SpeechConstant.AUDIO_SOURCE, "" + MediaRecorder.AudioSource.VOICE_RECOGNITION);
-
-                    if (mPwdType == PWD_TYPE_TEXT) {
-                        // 文本密码注册需要传入密码
-                        if (TextUtils.isEmpty(mTextPwd)) {
-                            showTip("请获取密码后进行操作");
-                            return;
-                        }
-                        mVerifier.setParameter(SpeechConstant.ISV_PWD, mTextPwd);
-                        ((TextView) findViewById(R.id.showPwd)).setText("请读出："
-                                + mTextPwd);
-                    } else if (mPwdType == PWD_TYPE_NUM) {
-                        // 数字密码注册需要传入密码
-                        String verifyPwd = mVerifier.generatePassword(8);
-                        mVerifier.setParameter(SpeechConstant.ISV_PWD, verifyPwd);
-                        ((TextView) findViewById(R.id.showPwd)).setText("请读出："
-                                + verifyPwd);
-                    }
-                    setRadioClickable(false);
-                    // 设置auth_id，不能设置为空
-                    mVerifier.setParameter(SpeechConstant.AUTH_ID, mAuthId);
-                    mVerifier.setParameter(SpeechConstant.ISV_PWDT, "" + mPwdType);
-                    // 开始验证
-                    mVerifier.startListening(mVerifyListener);
-                    break;
+                /*
                 case R.id.isv_stop_record:
                     mVerifier.stopListening();
                     break;
@@ -278,6 +281,7 @@ public class RegisterActivity extends Activity implements OnClickListener {
                     mVerifier.cancel();
                     initTextView();
                     break;
+                    */
                 default:
                     break;
             }
@@ -298,36 +302,6 @@ public class RegisterActivity extends Activity implements OnClickListener {
 
             String result = new String(buffer);
             switch (mPwdType) {
-                case PWD_TYPE_TEXT:
-                    try {
-                        JSONObject object = new JSONObject(result);
-                        if (!object.has("txt_pwd")) {
-                            initTextView();
-                            return;
-                        }
-
-                        JSONArray pwdArray = object.optJSONArray("txt_pwd");
-                        items = new String[pwdArray.length()];
-                        for (int i = 0; i < pwdArray.length(); i++) {
-                            items[i] = pwdArray.getString(i);
-                        }
-                        mTextPwdSelectDialog = new AlertDialog.Builder(
-                                RegisterActivity.this)
-                                .setTitle("请选择密码文本")
-                                .setItems(items,
-                                        new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(
-                                                    DialogInterface arg0, int arg1) {
-                                                mTextPwd = items[arg1];
-                                                mResultEditText.setText("您的密码：" + mTextPwd);
-                                            }
-                                        }).create();
-                        mTextPwdSelectDialog.show();
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    break;
                 case PWD_TYPE_NUM:
                     StringBuffer numberString = new StringBuffer();
                     try {
@@ -347,7 +321,7 @@ public class RegisterActivity extends Activity implements OnClickListener {
                     }
                     mNumPwd = numberString.toString();
                     mNumPwdSegs = mNumPwd.split("-");
-                    mResultEditText.setText("您的密码：\n" + mNumPwd);
+                    //mResultEditText.setText("您的密码：\n" + mNumPwd);
                     break;
                 default:
                     break;
@@ -357,7 +331,6 @@ public class RegisterActivity extends Activity implements OnClickListener {
 
         @Override
         public void onCompleted(SpeechError error) {
-            setRadioClickable(true);
 
             if (null != error && ErrorCode.SUCCESS != error.getErrorCode()) {
                 showTip("获取失败：" + error.getErrorCode());
@@ -384,7 +357,8 @@ public class RegisterActivity extends Activity implements OnClickListener {
                 if ("del".equals(cmd)) {
                     if (ret == ErrorCode.SUCCESS) {
                         showTip("删除成功");
-                        mResultEditText.setText("");
+                        turnOffGotoButton();
+                        //mResultEditText.setText("");
                     } else if (ret == ErrorCode.MSP_ERROR_FAIL) {
                         showTip("删除失败，模型不存在");
                     }
@@ -408,91 +382,6 @@ public class RegisterActivity extends Activity implements OnClickListener {
             if (null != error && ErrorCode.SUCCESS != error.getErrorCode()) {
                 showTip("操作失败：" + error.getPlainDescription(true));
             }
-        }
-    };
-
-    private VerifierListener mVerifyListener = new VerifierListener() {
-
-        @Override
-        public void onVolumeChanged(int volume, byte[] data) {
-            showTip("当前正在说话，音量大小：" + volume);
-            Log.d(TAG, "返回音频数据：" + data.length);
-        }
-
-        @Override
-        public void onResult(VerifierResult result) {
-            setRadioClickable(true);
-            mShowMsgTextView.setText(result.source);
-
-            if (result.ret == 0) {
-                // 验证通过
-                mShowMsgTextView.setText("验证通过");
-            } else {
-                // 验证不通过
-                switch (result.err) {
-                    case VerifierResult.MSS_ERROR_IVP_GENERAL:
-                        mShowMsgTextView.setText("内核异常");
-                        break;
-                    case VerifierResult.MSS_ERROR_IVP_TRUNCATED:
-                        mShowMsgTextView.setText("出现截幅");
-                        break;
-                    case VerifierResult.MSS_ERROR_IVP_MUCH_NOISE:
-                        mShowMsgTextView.setText("太多噪音");
-                        break;
-                    case VerifierResult.MSS_ERROR_IVP_UTTER_TOO_SHORT:
-                        mShowMsgTextView.setText("录音太短");
-                        break;
-                    case VerifierResult.MSS_ERROR_IVP_TEXT_NOT_MATCH:
-                        mShowMsgTextView.setText("验证不通过，您所读的文本不一致");
-                        break;
-                    case VerifierResult.MSS_ERROR_IVP_TOO_LOW:
-                        mShowMsgTextView.setText("音量太低");
-                        break;
-                    case VerifierResult.MSS_ERROR_IVP_NO_ENOUGH_AUDIO:
-                        mShowMsgTextView.setText("音频长达不到自由说的要求");
-                        break;
-                    default:
-                        mShowMsgTextView.setText("验证不通过");
-                        break;
-                }
-            }
-        }
-
-        // 保留方法，暂不用
-        @Override
-        public void onEvent(int eventType, int arg1, int arg2, Bundle arg3) {
-            // 以下代码用于获取与云端的会话id，当业务出错时将会话id提供给技术支持人员，可用于查询会话日志，定位出错原因
-            //	if (SpeechEvent.EVENT_SESSION_ID == eventType) {
-            //		String sid = obj.getString(SpeechEvent.KEY_EVENT_SESSION_ID);
-            //		Log.d(TAG, "session id =" + sid);
-            //	}
-        }
-
-        @Override
-        public void onError(SpeechError error) {
-            setRadioClickable(true);
-
-            switch (error.getErrorCode()) {
-                case ErrorCode.MSP_ERROR_NOT_FOUND:
-                    mShowMsgTextView.setText("模型不存在，请先注册");
-                    break;
-
-                default:
-                    showTip("onError Code：" + error.getPlainDescription(true));
-                    break;
-            }
-        }
-
-        @Override
-        public void onEndOfSpeech() {
-            // 此回调表示：检测到了语音的尾端点，已经进入识别过程，不再接受语音输入
-            showTip("结束说话");
-        }
-
-        @Override
-        public void onBeginOfSpeech() {
-            // 此回调表示：sdk内部录音机已经准备好了，用户可以开始语音输入
-            showTip("开始说话");
         }
     };
 
@@ -541,11 +430,12 @@ public class RegisterActivity extends Activity implements OnClickListener {
                 if (result.suc == result.rgn) {
                     setRadioClickable(true);
                     mShowMsgTextView.setText("注册成功");
+                    turnOnGotoButton();
 
                     if (PWD_TYPE_TEXT == mPwdType) {
-                        mResultEditText.setText("您的文本密码声纹ID：\n" + result.vid);
+                        //mResultEditText.setText("您的文本密码声纹ID：\n" + result.vid);
                     } else if (PWD_TYPE_NUM == mPwdType) {
-                        mResultEditText.setText("您的数字密码声纹ID：\n" + result.vid);
+                        //mResultEditText.setText("您的数字密码声纹ID：\n" + result.vid);
                     }
 
                 } else {

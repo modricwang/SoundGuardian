@@ -1,154 +1,122 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<android.support.constraint.ConstraintLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginLeft="5dp"
-    android:layout_marginRight="5dp"
-    android:gravity="center_horizontal"
-    android:orientation="vertical" >
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:gravity="center" >
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
         <TextView
+            android:id="@+id/textView2"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center_horizontal"
             android:text="注册界面"
-            android:textSize="30sp" />
-    </LinearLayout>
-
-    <EditText
-        android:id="@+id/edt_result"
+            android:textSize="30sp"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="80dp"
+            android:layout_marginLeft="8dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:layout_marginRight="8dp"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintHorizontal_bias="0.0" />
+        <Button
+        android:id="@+id/isv_register"
         style="@style/textStyle"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:gravity="top|left"
-        android:maxLines="3"
-        android:minLines="3" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:orientation="horizontal" >
-
-        <TextView
-            style="@style/textStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="用户标识：" />
-
-        <TextView
-            android:id="@+id/txt_authorid"
-            style="@style/textStyle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="left" >
-        </TextView>
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:orientation="horizontal" >
-
-        <Button
-            android:id="@+id/isv_getpassword"
-            style="@style/textStyle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="获取密码" />
-
-        <Button
-            android:id="@+id/isv_search"
-            style="@style/textStyle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="查询模型" />
-
+        android:layout_weight="1"
+        android:text="注册"
+            android:layout_marginRight="8dp"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_marginLeft="8dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@+id/textView2" />
         <Button
             android:id="@+id/isv_delete"
             style="@style/textStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="删除模型" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:orientation="horizontal" >
-
+            android:text="删除模型"
+            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@+id/isv_register"
+            android:layout_marginRight="8dp"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_marginLeft="8dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintHorizontal_bias="0.0" />
         <Button
-            android:id="@+id/isv_register"
+            android:id="@+id/goto_management"
             style="@style/textStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="注册" />
-
-        <Button
-            android:id="@+id/isv_verify"
-            style="@style/textStyle"
-            android:layout_width="0.1dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="验证" />
-
-        <Button
-            android:id="@+id/isv_stop_record"
-            style="@style/textStyle"
-            android:layout_width="0.1dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="停止录音" />
-    </LinearLayout>
-
-    <Button
-        android:id="@+id/isv_cancel"
-        style="@style/textStyle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:text="取消" />
+            android:text="下一步"
+            android:layout_marginRight="8dp"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_marginLeft="8dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@+id/isv_delete" />
 
     <TextView
         android:id="@+id/showPwd"
         style="@style/textStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5dp" />
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:text="Default"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintHorizontal_bias="0.501"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@+id/recordTime" />
 
     <TextView
         android:id="@+id/showMsg"
         style="@style/textStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5dp" />
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="8dp"
+        android:text="Default"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/goto_management"
+        app:layout_constraintHorizontal_bias="0.501" />
 
     <TextView
         android:id="@+id/showRegFbk"
         style="@style/textStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5dp" />
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:text="Default"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintHorizontal_bias="0.501"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@+id/showMsg" />
 
     <TextView
         android:id="@+id/recordTime"
         style="@style/textStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5dp" />
-
-</LinearLayout>
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:text="Default"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintHorizontal_bias="0.501"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@+id/showRegFbk" />
+</android.support.constraint.ConstraintLayout>

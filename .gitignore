@@ -26,3 +26,7 @@ proguard/
 # Log Files
 *.log
 .idea/workspace.xml
+.idea/libraries/animated_vector_drawable_25_2_0.xml
+.idea/libraries/appcompat_v7_25_2_0.xml
+.idea/libraries/constraint_layout_1_0_0_beta5.xml
+.idea/libraries/design_25_2_0.xml

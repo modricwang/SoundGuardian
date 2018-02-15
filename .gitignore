@@ -30,3 +30,6 @@ proguard/
 .idea/libraries/appcompat_v7_25_2_0.xml
 .idea/libraries/constraint_layout_1_0_0_beta5.xml
 .idea/libraries/design_25_2_0.xml
+.idea/libraries/*
+.idea/libraries/
+.idea/workspace.xml

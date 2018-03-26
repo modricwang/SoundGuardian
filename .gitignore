@@ -30,6 +30,7 @@ proguard/
 .idea/libraries/appcompat_v7_25_2_0.xml
 .idea/libraries/constraint_layout_1_0_0_beta5.xml
 .idea/libraries/design_25_2_0.xml
+<<<<<<< HEAD
 .idea/workspace.xml
 .idea/libraries/transition_25_2_0.xml
 
@@ -37,4 +38,10 @@ proguard/
 *.xml
 .idea/misc.xml
 .idea/misc.xml
+=======
+.idea/libraries/*
+.idea/libraries/
+.idea/workspace.xml
+.idea/workspace.xml
+>>>>>>> 11cd03c89efec9d5017c208974e481459199131d
 .idea/workspace.xml
